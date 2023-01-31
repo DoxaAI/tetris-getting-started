@@ -76,7 +76,7 @@ class TetrisBoard:
     def check_endgame(self) -> bool:
         return self.board[1].count(None) == len(self.board[0])
 
-    def check_board(self) -> int:
+    def check_board(self) -> List[int]:
         lines_cleared: List[int] = []
 
         for i in range(len(self.board)):
@@ -86,18 +86,19 @@ class TetrisBoard:
         if len(lines_cleared) > 0:
             lines_cleared.reverse()
 
-            for i in lines_cleared:
-                del self.board[i]
+        return lines_cleared
 
-            top: List[List[Optional[str]]] = [
-                [None] * 10 for _ in range(len(lines_cleared))
-            ]
+    def clear_lines(self, lines_cleared) -> int:
+        for i in lines_cleared:
+            del self.board[i]
 
-            self.board = top + self.board
+        top: List[List[Optional[str]]] = [
+            [None] * 10 for _ in range(len(lines_cleared))
+        ]
 
-            return self.score_dict[len(lines_cleared)]
+        self.board = top + self.board
 
-        return 0
+        return self.score_dict[len(lines_cleared)]
 
     def update_board(
         self, old: List[Tuple[int, int]], new: List[Tuple[int, int]]
@@ -181,39 +182,37 @@ class TetrisGameRunner:
         assert input() == "INIT"
         print("OK")
 
-    def _request_update(self):
-        print("UPDATE_REQUEST")
-
     def _handle_update(self):
         line = input()
 
-        line_list = line.split(".")
+        line_list = line.split(",")
 
-        self.score = int(line_list[0])
-        self.board.piece.piece_type = line_list[1]
-        self.board.piece.x = int(line_list[2])
-        self.board.piece.y = int(line_list[3])
-        self.board.piece.orientation = int(line_list[4])
-        board_state = line_list[5]
+        if line_list[0] == "LC":
+            self.score = int(line_list[1])
 
-        board_updates = board_state.split(",")
+            lines_to_clear = [int(line) for line in line_list[2:]]
+            self.board.clear_lines(lines_to_clear)
 
-        self.board.board = [[None] * 10 for _ in range(21)]
+        elif line_list[0] == "CHANGE":
+            self.board.piece.piece_type = line_list[1]
+            self.board.piece.x = int(line_list[2])
+            self.board.piece.y = int(line_list[3])
+            self.board.piece.orientation = int(line_list[4])
 
-        pointer = 0
-        while board_updates[pointer] != "":
-            self.board.board[int(board_updates[pointer + 1])][
-                int(board_updates[pointer + 2])
-            ] = str(board_updates[pointer])
-            pointer += 3
+            updates = line_list[5:]
+            for update in updates:
+                split_update = update.split(".")
+                self.board.board[int(split_update[1])][int(split_update[2])] = (
+                    None if split_update[0] == "N" else split_update[0]
+                )
 
     def run(self):
         self._handle_doxa_initialisation()
 
         while True:
-            self._request_update()
             self._handle_update()
 
+            assert input() == "MOVE"
             action = self.agent.play_move(self.board).numerator
 
             assert action in range(6)
