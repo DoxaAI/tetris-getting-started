@@ -181,6 +181,9 @@ class TetrisGameRunner:
         assert input() == "INIT"
         print("OK")
 
+    def _request_update(self):
+        print("UPDATE_REQUEST")
+
     def _handle_update(self):
         line = input()
 
@@ -208,6 +211,7 @@ class TetrisGameRunner:
         self._handle_doxa_initialisation()
 
         while True:
+            self._request_update()
             self._handle_update()
 
             action = self.agent.play_move(self.board).numerator
