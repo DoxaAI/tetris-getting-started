@@ -182,9 +182,7 @@ class TetrisGameRunner:
         assert input() == "INIT"
         print("OK")
 
-    def _handle_update(self):
-        line = input()
-
+    def _handle_update(self, line):
         line_list = line.split(",")
 
         if line_list[0] == "LC":
@@ -192,8 +190,6 @@ class TetrisGameRunner:
 
             lines_to_clear = [int(line) for line in line_list[2:]]
             self.board.clear_lines(lines_to_clear)
-
-            return True
 
         elif line_list[0] == "CHANGE":
             self.board.piece.piece_type = line_list[1]
@@ -208,8 +204,6 @@ class TetrisGameRunner:
                     None if split_update[0] == "N" else split_update[0]
                 )
 
-            return False
-
         else:
             raise TypeError(
                 f"Updates should be of Type LC or CHANGE, received {str(line_list[0])}"
@@ -219,12 +213,14 @@ class TetrisGameRunner:
         self._handle_doxa_initialisation()
 
         while True:
-            if self._handle_update():
-                continue
+            message = input()
 
-            assert input() == "MOVE"
-            action = self.agent.play_move(self.board).numerator
+            if message == "MOVE":
+                action = self.agent.play_move(self.board).numerator
 
-            assert action in range(6)
+                assert action in range(6)
 
-            print(str(action))
+                print(str(action))
+
+            else:
+                self._handle_update(message)
