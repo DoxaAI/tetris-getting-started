@@ -1,32 +1,18 @@
 import asyncio
-from random import randrange
 
-from engine.board import TetrisBoard
-from engine.game import (
-    Action,
-    BaseAgent,
-    HumanAgent,
-    LocalTetrisGame,
-)
-from engine.interfaces import TetrisCLI
+from engine.agents import *
+from engine.game import TetrisGame
+from engine.interfaces import TetrisCLI, TetrisPygame
 
-from submission.tetris import TetrisPlayer
-from submission.run import Agent
-
-
-class RandomAgent(BaseAgent):
-    def __init__(self) -> None:
-        super().__init__()
-
-    async def play_move(self, board: TetrisBoard) -> Action:
-        return Action(randrange(6))
+SelectedAgent = RandomAgent
 
 
 async def main():
-    agent = Agent()
-    game = LocalTetrisGame(agent)
+    agent = SelectedAgent()
+    game = TetrisGame(agent)
 
-    ui = TetrisCLI(game, fast=False)
+    # ui = TetrisCLI(game, fast=False)
+    ui = TetrisPygame(game)
     await ui.run()
 
 

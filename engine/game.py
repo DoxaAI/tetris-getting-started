@@ -1,90 +1,127 @@
-from typing import Generator, AsyncGenerator, Optional, Tuple
+from typing import AsyncGenerator, Generator, List, Optional, Tuple
 
 import numpy as np
 
 from engine.actions import Action
+from engine.agents import BaseAgent
 from engine.board import TetrisBoard
 from engine.piece import TetrisPiece
 from engine.pieces import PIECES
 
 
-class BaseAgent:
-    async def play_move(self, board: TetrisBoard) -> Action:
-        raise NotImplementedError
+class TetrisGame:
+    agent: BaseAgent
+    seed: int
+    score: int
+    running: bool
+    board: TetrisBoard
 
-
-class HumanAgent(BaseAgent):
-    async def play_move(self, board: TetrisBoard) -> Action:
-        move = input()
-        if move == "q":
-            return Action.ROTATE_ANTICLOCKWISE
-        elif move == "e":
-            return Action.ROTATE_CLOCKWISE
-        elif move == "a":
-            return Action.MOVE_LEFT
-        elif move == "d":
-            return Action.MOVE_RIGHT
-        elif move == "s":
-            return Action.HARD_DROP
-
-        return Action.NOOP
-
-
-class LocalTetrisGame:
     def __init__(self, agent: BaseAgent, seed: int = -1) -> None:
+        self.agent = agent
         self.seed = seed
+
         self.score = 0
         self.running = True
-        self.agent = agent
         self.board = TetrisBoard()
 
     def generate_pieces(self) -> Generator[TetrisPiece, None, None]:
-        if self.seed != -1:
-            np.random.seed(self.seed)
+        """Generates a list of all the pieces and yields them in order for the game.
 
-        piece_order = np.random.randint(7, size=1000)  # type: ignore
-        piece_counter = 0
+        Args:
+            curr_board (List[List[Optional[str]]]): The 2D list board state to compare to this object's.
 
-        while self.running and piece_counter < 1000:
-            piece: TetrisPiece = PIECES[piece_order[piece_counter]]()  # type: ignore
-            piece_counter += 1
-            self.board.set_piece(piece)
-            self.board.spawn_piece()
+        Yields:
+            List[Tuple[str, int, int]]: List of changes in the form (cell value, y, x).
+        """
 
-            yield piece
+        random_state = np.random.RandomState(None if self.seed == -1 else self.seed)
+        pieces = random_state.randint(7, size=1000)  # type: ignore
+
+        for piece in pieces:
+            if not self.running:
+                return
+
+            yield PIECES[piece]()
 
     async def run(
         self,
-    ) -> AsyncGenerator[Tuple[bool, int, TetrisBoard, Optional[Action]], None]:
+    ) -> AsyncGenerator[
+        Tuple[
+            Optional[List[Tuple[str, int, int]]],
+            Optional[List[int]],
+            TetrisBoard,
+            Optional[Action],
+        ],
+        None,
+    ]:
+        """Runs the Tetris game. The meat and potatoes of the Tetris engine.
+
+        Yields: AsyncGenerator[
+                    Tuple[Optional[Union[List[Tuple[str, int, int]], List[int]]],
+                    int,
+                    TetrisBoard,
+                    Optional[Action]],
+                    None
+                ]:
+                A list of changes to the board in the form (piece_type, y, x) or a list of the line indices cleared.
+                The game's current score.
+                The current state of the board object of this game.
+                The action taken if any.
+        """
+
+        # Make a copy of the board at this point for comparision
+        old_board = self.board.copy()
+
         for piece in self.generate_pieces():
-            yield self.running, self.score, self.board, None
+            # Set the new piece to be the current one and spawn it
+            self.board.set_piece(piece)
+            if not self.board.spawn_piece():
+                self.running = False
+                if changes := self.board.get_changes(old_board):
+                    yield changes, None, self.board, None
+
+                return
 
             while not piece.landed:
-                move = await self.agent.play_move(self.board)
-                assert move.numerator in range(6)
+                # Get board differences
+                changes = self.board.get_changes(old_board)
 
-                if move == Action.HARD_DROP:
-                    while not piece.landed:
-                        self.board.fall()
-                else:
-                    if move == Action.ROTATE_ANTICLOCKWISE:
-                        self.board.rotate_piece_anticlockwise()
-                    elif move == Action.ROTATE_CLOCKWISE:
-                        self.board.rotate_piece_clockwise()
-                    elif move == Action.MOVE_LEFT:
-                        self.board.move_piece_left()
-                    elif move == Action.MOVE_RIGHT:
-                        self.board.move_piece_right()
+                # This yield updates the new piece spawning
+                yield changes, None, self.board, None
 
-                    self.board.fall()
+                # Wait for agent to make a move
+                action = await self.agent.play_move(self.board)
+                assert action in Action
 
-                yield self.running, self.score, self.board, move
+                # Reset the previous board to the current
+                old_board = self.board.copy()
 
-            self.score += self.board.check_board()
-            self.running = self.board.check_endgame()
+                # Perform the action
+                self.board.apply_action(action)
 
-        yield self.running, self.score, self.board, None
+                # Yield the changes to the board once the current action has taken place
+                # Deals with cases of repeated movement into corner or hard drop when just above another piece
+                # Moves are yielded regardless so that they are still recorded
+                changes = self.board.get_changes(old_board)
+                yield changes, None, self.board, action
 
+                if changes:
+                    old_board = self.board.copy()
 
-class RemoteTetrisGame:
-    pass
+            # Get indices of lines to clear
+            lines_to_clear = self.board.find_lines_to_clear()
+
+            if lines_to_clear:
+                # Clear the lines, yield the change, and reset previous board to current
+                self.score += self.board.clear_lines(lines_to_clear)
+
+                yield None, lines_to_clear, self.board, None
+                old_board = self.board.copy()
+
+            # Update the running state of the game
+            self.running = self.board.is_game_running()
+
+            # If the game is not running but there is one last change, yield it
+            # In the case of a piece moving/rotating right at the end
+            if not self.running and (changes := self.board.get_changes(old_board)):
+                yield changes, None, self.board, None

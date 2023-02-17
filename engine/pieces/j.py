@@ -152,6 +152,18 @@ class JPiece(TetrisPiece):
                     (self.y - 1, self.x + 1),
                 ]
 
+            elif (
+                self.y == 20
+                and not board[self.y - 1][self.x]
+                and not board[self.y - 2][self.x]
+                and not board[self.y - 2][self.x + 1]
+            ):
+                new = [
+                    (self.y - 1, self.x),
+                    (self.y - 2, self.x),
+                    (self.y - 2, self.x + 1),
+                ]
+
         elif self.orientation == 1:
             if self.x == 0:
                 if (
@@ -219,11 +231,20 @@ class JPiece(TetrisPiece):
 
         if new:
             if self.orientation == 0:
-                old = [
-                    (self.y - 1, self.x - 1),
-                    (self.y, self.x - 1),
-                    (self.y, self.x + 1),
-                ]
+                if self.y == 20:
+                    old = [
+                        (self.y, self.x + 1),
+                        (self.y, self.x - 1),
+                        (self.y - 1, self.x - 1),
+                    ]
+                    self.y -= 1
+
+                else:
+                    old = [
+                        (self.y - 1, self.x - 1),
+                        (self.y, self.x - 1),
+                        (self.y, self.x + 1),
+                    ]
             elif self.orientation == 1:
                 old = [
                     (self.y + 1, self.x),
@@ -270,6 +291,13 @@ class JPiece(TetrisPiece):
                     (self.y + 1, self.x),
                     (self.y + 1, self.x - 1),
                 ]
+
+            elif (
+                self.y == 20
+                and not board[self.y - 1][self.x]
+                and not board[self.y - 2][self.x]
+            ):
+                new = [(self.y - 1, self.x), (self.y - 2, self.x)]
 
         elif self.orientation == 1:
             if self.x == 0:
@@ -322,11 +350,16 @@ class JPiece(TetrisPiece):
 
         if new:
             if self.orientation == 0:
-                old = [
-                    (self.y - 1, self.x - 1),
-                    (self.y, self.x - 1),
-                    (self.y, self.x + 1),
-                ]
+                if self.y == 20:
+                    old = [(self.y, self.x + 1), (self.y - 1, self.x - 1)]
+                    self.y -= 1
+
+                else:
+                    old = [
+                        (self.y - 1, self.x - 1),
+                        (self.y, self.x - 1),
+                        (self.y, self.x + 1),
+                    ]
             elif self.orientation == 1:
                 if self.x == 0:
                     old = [(self.y - 1, self.x + 1), (self.y + 1, self.x)]

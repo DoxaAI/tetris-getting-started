@@ -144,6 +144,13 @@ class TPiece(TetrisPiece):
             if self.y < 20 and not board[self.y + 1][self.x]:
                 new = [(self.y + 1, self.x)]
 
+            elif (
+                self.y == 20
+                and not board[self.y - 2][self.x]
+                and not board[self.y - 1][self.x + 1]
+            ):
+                new = [(self.y - 2, self.x), (self.y - 1, self.x + 1)]
+
         elif self.orientation == 1:
             if self.x == 0:
                 if not board[self.y][self.x + 2] and not board[self.y + 1][self.x + 1]:
@@ -171,7 +178,13 @@ class TPiece(TetrisPiece):
 
         if new:
             if self.orientation == 0:
-                old = [(self.y, self.x - 1)]
+                if self.y == 20:
+                    old = [(self.y, self.x - 1), (self.y, self.x + 1)]
+                    self.y -= 1
+
+                else:
+                    old = [(self.y, self.x - 1)]
+
             elif self.orientation == 1:
                 if self.x == 0:
                     old = [(self.y - 1, self.x), (self.y + 1, self.x)]
@@ -199,8 +212,15 @@ class TPiece(TetrisPiece):
         old, new = None, None
 
         if self.orientation == 0:
-            if self.y < 20 and not board[self.y + 1][self.x] and self.y < 20:
+            if self.y < 20 and not board[self.y + 1][self.x]:
                 new = [(self.y + 1, self.x)]
+
+            elif (
+                self.y == 20
+                and not board[self.y - 2][self.x]
+                and not board[self.y - 1][self.x - 1]
+            ):
+                new = [(self.y - 2, self.x), (self.y - 1, self.x - 1)]
 
         elif self.orientation == 1:
             if self.x == 0:
@@ -229,7 +249,13 @@ class TPiece(TetrisPiece):
 
         if new:
             if self.orientation == 0:
-                old = [(self.y, self.x + 1)]
+                if self.y == 20:
+                    old = [(self.y, self.x - 1), (self.y, self.x + 1)]
+                    self.y -= 1
+
+                else:
+                    old = [(self.y, self.x + 1)]
+
             elif self.orientation == 1:
                 if self.x == 0:
                     old = [(self.y - 1, self.x), (self.y + 1, self.x)]
@@ -252,7 +278,6 @@ class TPiece(TetrisPiece):
         return old, new
 
     def has_landed(self, board: List[List[Optional[str]]]) -> bool:
-
         if self.orientation == 0:
             if (
                 self.y == 20

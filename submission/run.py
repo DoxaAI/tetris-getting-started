@@ -1,11 +1,7 @@
-from typing import Literal
-from random import randrange
-
 from tetris import (
     TetrisGameRunner,
     TetrisPlayer,
     TetrisBoard,
-    TetrisPiece,
     Action,
 )
 
@@ -14,8 +10,8 @@ class Agent(TetrisPlayer):
     def __init__(self) -> None:
         super().__init__()
 
-    def play_move(self, board: TetrisBoard) -> Action:
-        return Action(randrange(6))
+    async def play_move(self, board: TetrisBoard) -> Action:
+        raise NotImplementedError("No agent implemented!")
 
 
 #####################################################################

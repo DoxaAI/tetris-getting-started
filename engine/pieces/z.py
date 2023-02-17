@@ -155,30 +155,64 @@ class ZPiece(TetrisPiece):
             ):
                 new = [(self.y + 1, self.x), (self.y - 1, self.x + 1)]
 
+            elif (
+                self.y == 20
+                and not board[self.y - 1][self.x + 1]
+                and not board[self.y - 2][self.x + 1]
+            ):
+                new = [(self.y - 1, self.x + 1), (self.y - 2, self.x + 1)]
+
         elif self.orientation == 1:
-            if not board[self.y][self.x - 1] and not board[self.y + 1][self.x + 1]:
-                new = [(self.y, self.x - 1), (self.y + 1, self.x + 1)]
+            if self.x > 0:
+                if not board[self.y][self.x - 1] and not board[self.y + 1][self.x + 1]:
+                    new = [(self.y, self.x - 1), (self.y + 1, self.x + 1)]
+            else:
+                if (
+                    not board[self.y + 1][self.x + 1]
+                    and not board[self.y + 1][self.x + 2]
+                ):
+                    new = [(self.y + 1, self.x + 1), (self.y + 1, self.x + 2)]
 
         elif self.orientation == 2:
             if not board[self.y - 1][self.x] and not board[self.y + 1][self.x - 1]:
                 new = [(self.y - 1, self.x), (self.y + 1, self.x - 1)]
 
         elif self.orientation == 3:
-            if not board[self.y - 1][self.x - 1] and not board[self.y][self.x + 1]:
-                new = [(self.y - 1, self.x - 1), (self.y, self.x + 1)]
+            if self.x < 9:
+                if not board[self.y - 1][self.x - 1] and not board[self.y][self.x + 1]:
+                    new = [(self.y - 1, self.x - 1), (self.y, self.x + 1)]
+
+            else:
+                if (
+                    not board[self.y - 1][self.x - 1]
+                    and not board[self.y - 1][self.x - 2]
+                ):
+                    new = [(self.y - 1, self.x - 1), (self.y - 1, self.x - 2)]
 
         else:
             raise ValueError("Incorrect value for orientation")
 
         if new:
             if self.orientation == 0:
-                old = [(self.y - 1, self.x - 1), (self.y - 1, self.x)]
+                if self.y == 20:
+                    old = [(self.y, self.x + 1), (self.y - 1, self.x - 1)]
+                    self.y -= 1
+                else:
+                    old = [(self.y - 1, self.x - 1), (self.y - 1, self.x)]
             elif self.orientation == 1:
-                old = [(self.y - 1, self.x + 1), (self.y, self.x + 1)]
+                if self.x > 0:
+                    old = [(self.y - 1, self.x + 1), (self.y, self.x + 1)]
+                else:
+                    old = [(self.y - 1, self.x + 1), (self.y + 1, self.x)]
+                    self.x += 1
             elif self.orientation == 2:
                 old = [(self.y + 1, self.x + 1), (self.y + 1, self.x)]
             elif self.orientation == 3:
-                old = [(self.y + 1, self.x - 1), (self.y, self.x - 1)]
+                if self.x < 9:
+                    old = [(self.y + 1, self.x - 1), (self.y, self.x - 1)]
+                else:
+                    old = [(self.y - 1, self.x), (self.y + 1, self.x - 1)]
+                    self.x -= 1
             else:
                 raise ValueError("Incorrect value for orientation")
 
@@ -199,30 +233,58 @@ class ZPiece(TetrisPiece):
             ):
                 new = [(self.y, self.x - 1), (self.y + 1, self.x - 1)]
 
+            elif (
+                self.y == 20
+                and not board[self.y - 2][self.x]
+                and not board[self.y][self.x - 1]
+            ):
+                new = [(self.y - 2, self.x), (self.y, self.x - 1)]
+
         elif self.orientation == 1:
-            if not board[self.y - 1][self.x] and not board[self.y - 1][self.x - 1]:
-                new = [(self.y - 1, self.x), (self.y - 1, self.x - 1)]
+            if self.x > 0:
+                if not board[self.y - 1][self.x] and not board[self.y - 1][self.x - 1]:
+                    new = [(self.y - 1, self.x), (self.y - 1, self.x - 1)]
+
+            else:
+                if not board[self.y - 1][self.x] and not board[self.y][self.x + 2]:
+                    new = [(self.y - 1, self.x), (self.y, self.x + 2)]
 
         elif self.orientation == 2:
             if not board[self.y][self.x + 1] and not board[self.y - 1][self.x + 1]:
                 new = [(self.y, self.x + 1), (self.y - 1, self.x + 1)]
 
         elif self.orientation == 3:
-            if not board[self.y + 1][self.x] and not board[self.y + 1][self.x + 1]:
-                new = [(self.y + 1, self.x), (self.y + 1, self.x + 1)]
+            if self.x < 9:
+                if not board[self.y + 1][self.x] and not board[self.y + 1][self.x + 1]:
+                    new = [(self.y + 1, self.x), (self.y + 1, self.x + 1)]
+            else:
+                if not board[self.y][self.x - 2] and not board[self.y + 1][self.x]:
+                    new = [(self.y, self.x - 2), (self.y + 1, self.x)]
 
         else:
             raise ValueError("Incorrect value for orientation")
 
         if new:
             if self.orientation == 0:
-                old = [(self.y - 1, self.x - 1), (self.y, self.x + 1)]
+                if self.y == 20:
+                    old = [(self.y, self.x), (self.y, self.x + 1)]
+                    self.y -= 1
+                else:
+                    old = [(self.y - 1, self.x - 1), (self.y, self.x + 1)]
             elif self.orientation == 1:
-                old = [(self.y - 1, self.x + 1), (self.y + 1, self.x)]
+                if self.x > 0:
+                    old = [(self.y - 1, self.x + 1), (self.y + 1, self.x)]
+                else:
+                    old = [(self.y, self.x), (self.y + 1, self.x)]
+                    self.x += 1
             elif self.orientation == 2:
                 old = [(self.y, self.x - 1), (self.y + 1, self.x + 1)]
             elif self.orientation == 3:
-                old = [(self.y - 1, self.x), (self.y + 1, self.x - 1)]
+                if self.x < 9:
+                    old = [(self.y - 1, self.x), (self.y + 1, self.x - 1)]
+                else:
+                    old = [(self.y, self.x), (self.y - 1, self.x)]
+                    self.x -= 1
             else:
                 raise ValueError("Incorrect value for orientation")
 
@@ -231,7 +293,6 @@ class ZPiece(TetrisPiece):
         return old, new
 
     def has_landed(self, board: List[List[Optional[str]]]) -> bool:
-
         if self.orientation == 0:
             if (
                 self.y == 20
