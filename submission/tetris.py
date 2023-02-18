@@ -341,6 +341,7 @@ class TetrisGameRunner:
         self.running = True
         self.agent = agent
         self.board = TetrisBoard()
+        self.board.piece = TetrisPiece()
 
     def _handle_doxa_initialisation(self):
         """Synchronises with DOXA at the start of a game."""
@@ -375,14 +376,16 @@ class TetrisGameRunner:
                 f"Updates should be of Type LC or CHANGE, received {str(line_list[0])}"
             )
 
-    def run(self):
+    async def run(self):
         self._handle_doxa_initialisation()
 
         while True:
             message = input()
 
             if message == "MOVE":
-                action = self.agent.play_move(self.board).numerator
+                action = await self.agent.play_move(self.board)
+
+                action = action.numerator
 
                 assert action in range(6)
 

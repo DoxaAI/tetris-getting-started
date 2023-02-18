@@ -1,3 +1,6 @@
+import asyncio
+from random import randrange
+
 from tetris import (
     TetrisGameRunner,
     TetrisPlayer,
@@ -18,7 +21,7 @@ class Agent(TetrisPlayer):
         super().__init__()
 
     async def play_move(self, board: TetrisBoard) -> Action:
-        raise NotImplementedError("No agent implemented!")
+        return Action(randrange(6))
 
 
 #####################################################################
@@ -30,4 +33,4 @@ class Agent(TetrisPlayer):
 if __name__ == "__main__":
     agent = Agent()
 
-    TetrisGameRunner(agent).run()
+    asyncio.run(TetrisGameRunner(agent).run())
