@@ -9,6 +9,14 @@ class BaseAgent:
         raise NotImplementedError
 
 
+class Agent(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__()
+
+    async def play_move(self, board: TetrisBoard) -> Action:
+        raise NotImplementedError
+
+
 class RandomAgent(BaseAgent):
     def __init__(self) -> None:
         super().__init__()
@@ -18,6 +26,9 @@ class RandomAgent(BaseAgent):
 
 
 class HumanAgent(BaseAgent):
+    def __init__(self) -> None:
+        super().__init__()
+
     async def play_move(self, board: TetrisBoard) -> Action:
         move = input()
         if move == "q":

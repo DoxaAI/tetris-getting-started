@@ -2,8 +2,15 @@ from tetris import (
     TetrisGameRunner,
     TetrisPlayer,
     TetrisBoard,
+    TetrisPiece,
     Action,
 )
+
+#################################################################
+#   Modify the Agent class below to implement your own agent.   #
+#   Implement the play_move function to return an Action.       #
+#   You may define additional methods as you see fit.           #
+#################################################################
 
 
 class Agent(TetrisPlayer):
