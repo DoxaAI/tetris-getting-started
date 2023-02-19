@@ -41,7 +41,7 @@ pipenv shell
 
 First, clone this repository if you have not already done so. Then, you can start implementing your first agent by modifying the `play_move()` method of the agent in `submission/agent.py`.
 
-The `play_move()` method should return one of the following actions:
+The `play_move()` method should return at least one of the following actions:
 
 ```py
 class Action(IntEnum):
@@ -52,6 +52,8 @@ class Action(IntEnum):
     MOVE_RIGHT = 4
     HARD_DROP = 5
 ```
+
+You can also return a sequence (e.g. a list) of moves, which will be performed in order until the piece lands (when any remaining moves are discarded).
 
 By default, the agent just plays moves at random. What interesting gameplay strategies can you come up with? 👀
 

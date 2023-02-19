@@ -87,15 +87,20 @@ class Game:
                 # This yield updates the new piece spawning
                 yield changes, None, self.board, None
 
-                # Wait for agent to make a move
-                action = await self.agent.play_move(self.board)
-                assert action in Action
+                # Wait for agent to make a number of moves
+                actions = await self.agent.play_move(self.board)
+                if isinstance(actions, Action):
+                    actions = [actions]
 
                 # Reset the previous board to the current
                 old_board = self.board.copy()
 
                 # Perform the action
-                self.board.apply_action(action)
+                for action in actions:
+                    self.board.apply_action(action)
+
+                    if self.board.piece.landed:
+                        break
 
                 # Yield the changes to the board once the current action has taken place
                 # Deals with cases of repeated movement into corner or hard drop when just above another piece

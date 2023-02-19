@@ -33,9 +33,14 @@ class GameRunner:
             if not message:
                 continue
             elif message[0] == "M":
-                action = await self.agent.play_move(self.board)
-                assert action in Action
-                print(action.value)
+                actions = await self.agent.play_move(self.board)
+                if isinstance(actions, Action):
+                    assert actions in Action
+                    print(actions.value)
+                elif actions:
+                    print(*[action.value for action in actions])
+                else:
+                    print(Action.NOOP.value)
             elif message[0] == "L":
                 self.score = int(message[1])
                 self.board.clear_lines([int(line) for line in message[2:]])

@@ -1,5 +1,6 @@
 import asyncio
 from random import randrange
+from typing import Sequence, Union
 
 from tetris import Action, BaseAgent, Board, GameRunner
 
@@ -10,14 +11,17 @@ from tetris import Action, BaseAgent, Board, GameRunner
 
 
 class Agent(BaseAgent):
-    async def play_move(self, board: Board) -> Action:
-        """Makes a Tetris move.
+    async def play_move(self, board: Board) -> Union[Action, Sequence[Action]]:
+        """Makes at least one Tetris move.
+
+        If a sequence of moves is returned, they are made in order
+        until the piece lands (with any remaining moves discarded).
 
         Args:
             board (Board): The Tetris board.
 
         Returns:
-            Action: The action to perform.
+            Union[Action, Sequence[Action]]: The action(s) to perform.
         """
 
         # Perform a random action
