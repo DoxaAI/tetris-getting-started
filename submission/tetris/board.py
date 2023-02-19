@@ -1,8 +1,8 @@
 import copy
-from typing import Dict, List, Optional, Tuple
+from enum import IntEnum
+from typing import Dict, List, Optional, Sequence, Tuple
 
-from engine.actions import Action
-from engine.piece import TetrisPiece
+from tetris.piece import Piece
 
 LINE_CLEAR_SCORES: Dict[int, int] = {1: 100, 2: 250, 3: 750, 4: 3000}
 
@@ -10,20 +10,29 @@ BOARD_WIDTH = 10
 BOARD_HEIGHT = 21
 
 
-class TetrisBoard:
+class Action(IntEnum):
+    NOOP = 0
+    ROTATE_ANTICLOCKWISE = 1
+    ROTATE_CLOCKWISE = 2
+    MOVE_LEFT = 3
+    MOVE_RIGHT = 4
+    HARD_DROP = 5
+
+
+class Board:
     board: List[List[Optional[str]]]
-    piece: Optional[TetrisPiece]
+    piece: Optional[Piece]
     running: bool
 
     def __init__(self) -> None:
         self.board = [[None] * BOARD_WIDTH for _ in range(BOARD_HEIGHT)]
         self.piece = None
 
-    def set_piece(self, piece: TetrisPiece) -> None:
+    def set_piece(self, piece: Piece) -> None:
         """Sets a piece to be the current piece being controlled.
 
         Args:
-            piece (TetrisPiece): Any one of the Tetris pieces.
+            piece (Piece): Any one of the Tetris pieces.
         """
         self.piece = piece
 
@@ -135,7 +144,7 @@ class TetrisBoard:
         return True
 
     def move_piece_left(self) -> None:
-        """Calls the current piece's function to move left and updates board if required."""
+        """Moves the current piece left and updates board if required."""
 
         old, new = self.piece.move_left(self.board)
 
@@ -143,7 +152,7 @@ class TetrisBoard:
             self.update_board(old, new)
 
     def move_piece_right(self) -> None:
-        """Calls the current piece's function to move right and updates board if required."""
+        """Moves the current piece right and updates board if required."""
 
         old, new = self.piece.move_right(self.board)
 
@@ -151,7 +160,7 @@ class TetrisBoard:
             self.update_board(old, new)
 
     def rotate_piece_clockwise(self) -> None:
-        """Calls the current piece's function to rotate clockwise and updates board if required."""
+        """Rotates the current piece clockwise and updates board if required."""
 
         old, new = self.piece.rotate_clockwise(self.board)
 
@@ -159,7 +168,7 @@ class TetrisBoard:
             self.update_board(old, new)
 
     def rotate_piece_anticlockwise(self) -> None:
-        """Calls the current piece's function to rotate anticlockwise and updates board if required."""
+        """Rotates the current piece anticlockwise and updates board if required."""
 
         old, new = self.piece.rotate_anticlockwise(self.board)
 
@@ -167,7 +176,7 @@ class TetrisBoard:
             self.update_board(old, new)
 
     def fall(self) -> None:
-        """Calls the current piece's function to fall one step if it hasn't landed and updates board if required."""
+        """Drops the current piece one position if it has not yet landed and updates the board if required."""
 
         self.piece.landed = self.piece.has_landed(self.board)
         if not self.piece.landed:
@@ -178,7 +187,7 @@ class TetrisBoard:
         """Applies an action to the current board.
 
         Args:
-            move (Action): The action to apply.
+            action (Action): The action to apply.
         """
 
         if action == Action.HARD_DROP:
@@ -196,19 +205,39 @@ class TetrisBoard:
 
         self.fall()
 
-    def with_move(self, action: Action) -> "TetrisBoard":
-        """Creates a copy of the current board object and applies an action to that board.
-           Used to see how the board would look at the next time step if an action has been taken.
+    def with_move(self, action: Action) -> "Board":
+        """Copies and returns the current board with a single action applied.
 
         Args:
-            action (Action): The action to be applied to the copy of the board.
+            action (Action): The action to apply.
 
         Returns:
-            TetrisBoard: A copy of the current board with the action applied to it with the fall step after.
+            Board: A copy of the current board with the action applied.
+        """
+
+        return self.with_moves([action])
+
+    def with_moves(self, actions: Sequence[Action]) -> "Board":
+        """Copies and returns the current board with the sequence of actions applied.
+
+        Args:
+            actions (List[Action]): A list of actions to perform.
+
+        Returns:
+            Board: A copy of the current board with the actions applied.
         """
 
         board = copy.deepcopy(self)
 
-        board.apply_action(action)
+        for action in actions:
+            board.apply_action(action)
+
+            if board.piece.landed:
+                break
 
         return board
+
+    def __getitem__(self, y):
+        """Accesses board rows."""
+
+        return self.board[y]

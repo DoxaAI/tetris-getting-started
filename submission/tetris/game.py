@@ -1,20 +1,18 @@
+import random
 from typing import AsyncGenerator, Generator, List, Optional, Tuple
 
-import numpy as np
-
-from engine.actions import Action
-from engine.agents import BaseAgent
-from engine.board import TetrisBoard
-from engine.piece import TetrisPiece
-from engine.pieces import PIECES
+from tetris.agent import BaseAgent
+from tetris.board import Action, Board
+from tetris.piece import Piece
+from tetris.pieces import PIECES
 
 
-class TetrisGame:
+class Game:
     agent: BaseAgent
     seed: int
     score: int
     running: bool
-    board: TetrisBoard
+    board: Board
 
     def __init__(self, agent: BaseAgent, seed: int = -1) -> None:
         self.agent = agent
@@ -22,9 +20,9 @@ class TetrisGame:
 
         self.score = 0
         self.running = True
-        self.board = TetrisBoard()
+        self.board = Board()
 
-    def generate_pieces(self) -> Generator[TetrisPiece, None, None]:
+    def generate_pieces(self) -> Generator[Piece, None, None]:
         """Generates a list of all the pieces and yields them in order for the game.
 
         Args:
@@ -34,8 +32,8 @@ class TetrisGame:
             List[Tuple[str, int, int]]: List of changes in the form (cell value, y, x).
         """
 
-        random_state = np.random.RandomState(None if self.seed == -1 else self.seed)
-        pieces = random_state.randint(7, size=1000)  # type: ignore
+        random_generator = random.Random(None if self.seed == -1 else self.seed)
+        pieces = random_generator.choices(range(7), k=1000)
 
         for piece in pieces:
             if not self.running:
@@ -49,17 +47,17 @@ class TetrisGame:
         Tuple[
             Optional[List[Tuple[str, int, int]]],
             Optional[List[int]],
-            TetrisBoard,
+            Board,
             Optional[Action],
         ],
         None,
     ]:
-        """Runs the Tetris game. The meat and potatoes of the Tetris engine.
+        """Runs the Tetris game. The meat and potatoes of the Tetris tetris.
 
         Yields: AsyncGenerator[
                     Tuple[Optional[Union[List[Tuple[str, int, int]], List[int]]],
                     int,
-                    TetrisBoard,
+                    Board,
                     Optional[Action]],
                     None
                 ]:

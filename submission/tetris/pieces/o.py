@@ -1,9 +1,9 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
-from engine.piece import TetrisPiece
+from tetris.piece import Piece
 
 
-class OPiece(TetrisPiece):
+class OPiece(Piece):
     piece_type = "O"
 
     def __init__(self) -> None:

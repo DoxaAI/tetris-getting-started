@@ -1,7 +1,7 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 
-class TetrisPiece:
+class Piece:
     piece_type = "N"
 
     def __init__(self) -> None:

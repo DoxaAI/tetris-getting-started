@@ -1,28 +1,30 @@
 import asyncio
 from random import randrange
 
-from tetris import (
-    TetrisGameRunner,
-    TetrisPlayer,
-    TetrisBoard,
-    TetrisPiece,
-    Action,
-)
+from tetris import Action, BaseAgent, Board, GameRunner
 
 #################################################################
 #   Modify the Agent class below to implement your own agent.   #
-#   Implement the play_move function to return an Action.       #
 #   You may define additional methods as you see fit.           #
 #################################################################
 
 
-class Agent(TetrisPlayer):
-    def __init__(self) -> None:
-        super().__init__()
+class Agent(BaseAgent):
+    async def play_move(self, board: Board) -> Action:
+        """Makes a Tetris move.
 
-    async def play_move(self, board: TetrisBoard) -> Action:
+        Args:
+            board (Board): The Tetris board.
+
+        Returns:
+            Action: The action to perform.
+        """
+
+        # Perform a random action
         return Action(randrange(6))
 
+
+SelectedAgent = Agent
 
 #####################################################################
 #   This runs your agent and communicates with DOXA over stdio,     #
@@ -31,6 +33,6 @@ class Agent(TetrisPlayer):
 #####################################################################
 
 if __name__ == "__main__":
-    agent = Agent()
+    agent = SelectedAgent()
 
-    asyncio.run(TetrisGameRunner(agent).run())
+    asyncio.run(GameRunner(agent).run())
