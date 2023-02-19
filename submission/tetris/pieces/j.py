@@ -113,7 +113,7 @@ class JPiece(Piece):
                 and not board[self.y + 1][self.x + 2]
             ):
                 old = [(self.y, self.x - 1), (self.y + 1, self.x + 1)]
-                new = [(self.y, self.x + 1), (self.y + 1, self.x + 2)]
+                new = [(self.y, self.x + 2), (self.y + 1, self.x + 2)]
 
         elif self.orientation == 3:
             if (

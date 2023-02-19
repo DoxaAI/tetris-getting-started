@@ -58,7 +58,7 @@ class TPiece(Piece):
                 and not board[self.y + 1][self.x - 1]
             ):
                 old = [(self.y, self.x + 1), (self.y + 1, self.x)]
-                new = [(self.y, self.x - 1), (self.y + 1, self.x - 1)]
+                new = [(self.y, self.x - 2), (self.y + 1, self.x - 1)]
 
         elif self.orientation == 3:
             if (
