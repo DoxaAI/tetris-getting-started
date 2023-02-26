@@ -8,14 +8,14 @@ from io import BytesIO
 import pygame
 import requests
 from PIL import Image
+from pygame.locals import KEYDOWN, K_a, K_d, K_e, K_q, K_s
 
 sys.path.append(os.path.dirname(os.path.abspath("submission/tetris")))
 
-from tetris import BOARD_HEIGHT, BOARD_WIDTH, Board
+from tetris import Action, BaseAgent, BOARD_HEIGHT, BOARD_WIDTH, Board
 from tetris.game import Game
 from tetris.interface import TetrisUI
 
-from submission.agent import SelectedAgent  # your agent
 
 PIECE_COLOURS = {
     None: (100, 100, 100),  # GREY
@@ -63,7 +63,14 @@ class TetrisPygame(TetrisUI):
 
         pygame.display.set_caption("Tetris")
 
-    def render(self, board: Board, score: int):
+    def render(self, board: Board, score: int) -> None:
+        """Renders the PyGame window with the current board state and score.
+
+        Args:
+            board (Board): The current board state.
+            score (int): The current score of the game.
+        """
+
         for y in range(BOARD_HEIGHT):
             for x in range(BOARD_WIDTH):
                 # Draw the current cell
@@ -93,7 +100,9 @@ class TetrisPygame(TetrisUI):
 
         self._screen.blit(text, text_rectangle)
 
-    def has_quit(self):
+    def has_quit(self) -> None:
+        """Checks whether the user has exited the PyGame window."""
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
@@ -127,8 +136,37 @@ class TetrisPygame(TetrisUI):
         pygame.quit()
 
 
+class HumanAgent(BaseAgent):
+    async def play_move(self, board: Board) -> Action:
+        move = pygame.event.wait()
+        while move.type != KEYDOWN and move.type != pygame.QUIT:
+            move = pygame.event.wait()
+
+        if move.type == pygame.QUIT:
+            pygame.quit()
+
+        if move.type == KEYDOWN:
+            if move.key == K_q:
+                return Action.ROTATE_ANTICLOCKWISE
+            elif move.key == K_e:
+                return Action.ROTATE_CLOCKWISE
+            elif move.key == K_a:
+                return Action.MOVE_LEFT
+            elif move.key == K_d:
+                return Action.MOVE_RIGHT
+            elif move.key == K_s:
+                return Action.HARD_DROP
+
+            return Action.NOOP
+
+
 async def main():
-    agent = SelectedAgent()
+    if len(sys.argv) > 1 and sys.argv[1] == "--live":
+        agent = HumanAgent()
+    else:
+        from submission.agent import SelectedAgent  # your agent
+
+        agent = SelectedAgent()
 
     ui = TetrisPygame()
     await ui.run(Game(agent))
