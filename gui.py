@@ -12,7 +12,9 @@ from pygame.locals import KEYDOWN, K_a, K_d, K_e, K_q, K_s
 
 sys.path.append(os.path.dirname(os.path.abspath("submission/tetris")))
 
-from tetris import Action, BaseAgent, BOARD_HEIGHT, BOARD_WIDTH, Board
+from tetris.agent import BaseAgent
+from tetris.board import Action, Board
+from tetris.constants import BOARD_HEIGHT, BOARD_WIDTH
 from tetris.game import Game
 from tetris.interface import TetrisUI
 

@@ -25,11 +25,8 @@ class Game:
     def generate_pieces(self) -> Generator[Piece, None, None]:
         """Generates a list of all the pieces and yields them in order for the game.
 
-        Args:
-            curr_board (List[List[Optional[str]]]): The 2D list board state to compare to this object's.
-
         Yields:
-            List[Tuple[str, int, int]]: List of changes in the form (cell value, y, x).
+            Generator[Piece, None, None]: An instance of the next generated piece in the game.
         """
 
         random_generator = random.Random(None if self.seed == -1 else self.seed)
@@ -106,7 +103,7 @@ class Game:
                 # Deals with cases of repeated movement into corner or hard drop when just above another piece
                 # Moves are yielded regardless so that they are still recorded
                 changes = self.board.get_changes(old_board)
-                yield changes, None, self.board, action
+                yield changes, None, self.board, actions
 
                 if changes:
                     old_board = self.board.copy()

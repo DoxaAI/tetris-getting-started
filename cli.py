@@ -48,7 +48,7 @@ class TetrisCLI(TetrisUI):
 
         # Print the score
         click.echo(f"\n {click.style('Score', bold=True)}: {score}\n")
-        time.sleep(0.1)
+        time.sleep(0.4)
 
     async def run(self, game: Game) -> None:
         """Runs the game for the CLI UI."""

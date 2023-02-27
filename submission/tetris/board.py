@@ -1,13 +1,15 @@
 import copy
 from enum import IntEnum
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import List, Optional, Sequence, Tuple
 
+from tetris.constants import (
+    BOARD_HEIGHT,
+    BOARD_WIDTH,
+    LINE_CLEAR_SCORES,
+    BoardState,
+    Cell,
+)
 from tetris.piece import Piece
-
-LINE_CLEAR_SCORES: Dict[int, int] = {1: 100, 2: 250, 3: 750, 4: 3000}
-
-BOARD_WIDTH = 10
-BOARD_HEIGHT = 21
 
 
 class Action(IntEnum):
@@ -20,7 +22,7 @@ class Action(IntEnum):
 
 
 class Board:
-    board: List[List[Optional[str]]]
+    board: BoardState
     piece: Optional[Piece]
     running: bool
 
@@ -32,8 +34,9 @@ class Board:
         """Sets a piece to be the current piece being controlled.
 
         Args:
-            piece (Piece): Any one of the Tetris pieces.
+            piece (Piece): A Tetris piece.
         """
+
         self.piece = piece
 
     def is_game_running(self) -> bool:
@@ -46,22 +49,20 @@ class Board:
 
         return self.board[1].count(None) == BOARD_WIDTH
 
-    def copy(self) -> List[List[Optional[str]]]:
+    def copy(self) -> BoardState:
         """Copies the internal board state.
 
         Returns:
-            List[List[Optional[str]]]: The board.
+            BoardState: The board.
         """
 
         return copy.deepcopy(self.board)
 
-    def get_changes(
-        self, old_board: List[List[Optional[str]]]
-    ) -> List[Tuple[str, int, int]]:
+    def get_changes(self, old_board: BoardState) -> List[Tuple[str, int, int]]:
         """Identifies differences between the current board and another board state.
 
         Args:
-            old_board (List[List[Optional[str]]]): The board to compare against.
+            old_board (BoardState): The board to compare against.
 
         Returns:
             List[Tuple[str, int, int]]: A list of changes in the form (cell_value, y, x).
@@ -70,8 +71,8 @@ class Board:
         return [
             ("N" if not self.board[i][j] else self.board[i][j], i, j)
             for i, row in enumerate(old_board)
-            for j, x in enumerate(row)
-            if self.board[i][j] != x
+            for j, piece_type in enumerate(row)
+            if self.board[i][j] != piece_type
         ]
 
     def find_lines_to_clear(self) -> List[int]:
@@ -97,7 +98,7 @@ class Board:
         if not line_indices:
             return 0
 
-        for i in line_indices:
+        for i in sorted(line_indices, reverse=True):
             del self.board[i]
 
         self.board = [
@@ -106,23 +107,27 @@ class Board:
 
         return LINE_CLEAR_SCORES[len(line_indices)]
 
-    def update_board(
-        self, old: List[Tuple[int, int]], new: List[Tuple[int, int]]
-    ) -> None:
+    def update_board(self, old: List[Cell], new: List[Cell]) -> None:
         """Updates the board based on old and new locations of the current piece.
 
+        Lists can be empty if no changes.
+
         Args:
-            old (List[Tuple[int, int]]): The old (y, x) coordinates of the piece to be removed.
-            new (List[Tuple[int, int]]): The new (y, x) coordinates of the piece to be added.
+            old (List[Cell]): The old (y, x) coordinates of the piece to be removed.
+            new (List[Cell]): The new (y, x) coordinates of the piece to be added.
         """
 
-        # old or new can be empty lists if nothing needs to be removed or added
-
         for old_cell in old:
-            self.board[old_cell[0]][old_cell[1]] = None
+            if 0 <= old_cell[0] < BOARD_HEIGHT and 0 <= old_cell[1] < BOARD_WIDTH:
+                self.board[old_cell[0]][old_cell[1]] = None
+            else:
+                raise RuntimeError("Cell out of bounds of the board.")
 
         for new_cell in new:
-            self.board[new_cell[0]][new_cell[1]] = self.piece.piece_type
+            if 0 <= new_cell[0] < BOARD_HEIGHT and 0 <= new_cell[1] < BOARD_WIDTH:
+                self.board[new_cell[0]][new_cell[1]] = self.piece.piece_type
+            else:
+                raise RuntimeError("Cell out of bounds of the board.")
 
     def spawn_piece(self) -> bool:
         """Spawns the board object's current piece on the board.
@@ -148,6 +153,9 @@ class Board:
 
         old, new = self.piece.move_left(self.board)
 
+        if (old is None) ^ (new is None):
+            raise RuntimeError("Error computing piece move left.")
+
         if old and new:
             self.update_board(old, new)
 
@@ -155,6 +163,9 @@ class Board:
         """Moves the current piece right and updates board if required."""
 
         old, new = self.piece.move_right(self.board)
+
+        if (old is None) ^ (new is None):
+            raise RuntimeError("Error computing piece move right.")
 
         if old and new:
             self.update_board(old, new)
@@ -164,6 +175,9 @@ class Board:
 
         old, new = self.piece.rotate_clockwise(self.board)
 
+        if (old is None) ^ (new is None):
+            raise RuntimeError("Error computing piece rotate clockwise.")
+
         if old and new:
             self.update_board(old, new)
 
@@ -171,6 +185,9 @@ class Board:
         """Rotates the current piece anticlockwise and updates board if required."""
 
         old, new = self.piece.rotate_anticlockwise(self.board)
+
+        if (old is None) ^ (new is None):
+            raise RuntimeError("Error computing piece rotate anticlockwise.")
 
         if old and new:
             self.update_board(old, new)
@@ -181,6 +198,10 @@ class Board:
         self.piece.landed = self.piece.has_landed(self.board)
         if not self.piece.landed:
             old, new = self.piece.fall()
+
+            if (old is None) ^ (new is None):
+                raise RuntimeError("Error computing piece fall.")
+
             self.update_board(old, new)
 
     def apply_action(self, action: Action) -> None:

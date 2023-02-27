@@ -10,13 +10,13 @@ from tetris.pieces.t import TPiece
 from tetris.pieces.z import ZPiece
 
 PIECES: List[Type[Piece]] = [
-    IPiece,
-    JPiece,
-    LPiece,
     OPiece,
+    IPiece,
     SPiece,
-    TPiece,
     ZPiece,
+    LPiece,
+    JPiece,
+    TPiece,
 ]
 
 PIECE_MAPPINGS: Dict[str, Type[Piece]] = {

@@ -1,6 +1,5 @@
 from tetris.agent import BaseAgent
-from tetris.board import BOARD_HEIGHT, BOARD_WIDTH, Action, Board
-from tetris.piece import Piece
+from tetris.board import Action, Board
 from tetris.pieces import PIECE_MAPPINGS
 
 
