@@ -41,6 +41,14 @@ pipenv shell
 
 First, clone this repository if you have not already done so. Then, you can start implementing your first agent by modifying the `play_move()` method of the agent in `submission/agent.py`.
 
+The current state of the Tetris board, `board`, is an argument to the `play_move()` method. You can use this object to access all the information you'll need to decide an action to take. You can take a look through the files in `submission/tetris` if you'd like to, but the most relevant information you'll need is:
+
+- `board.board`: a 2D list containing the current state of the Tetris board. Please note there is an extra row at index `[0]` (the top of the board) that you can exclude from any algorithms you may write. This row serves as a buffer for rotations directly after pieces spawn.
+
+- `board.piece`: The current Tetris piece that you are controlling.
+
+- `board.piece.piece_type`: The type of the current Tetris piece. It can be one of: `{I, J, L, O, S, T, Z}`.
+
 The `play_move()` method should return at least one of the following actions:
 
 ```py
@@ -53,7 +61,7 @@ class Action(IntEnum):
     HARD_DROP = 5
 ```
 
-You can also return a sequence (e.g. a list) of moves, which will be performed in order until the piece lands (when any remaining moves are discarded).
+You can also return a sequence (e.g. a list) of moves, which will be performed in order until the piece lands (at which point any remaining moves are discarded).
 
 By default, the agent just plays moves at random. What interesting gameplay strategies can you come up with? 👀
 
