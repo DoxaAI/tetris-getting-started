@@ -42,7 +42,7 @@ class TetrisPygame(TetrisUI):
         self._clock = pygame.time.Clock()
         self._display = pygame.display.Info()
         self._screen = pygame.display.set_mode(
-            [self._display.current_w * 0.2, self._display.current_h * 0.65]
+            [self._display.current_w * 0.21, self._display.current_h * 0.65]
         )
         self._score_font = pygame.font.Font("freesansbold.ttf", 26)
 
@@ -96,7 +96,7 @@ class TetrisPygame(TetrisUI):
 
         text_rectangle = text.get_rect()
         text_rectangle.center = (
-            math.floor(self._display.current_w * 0.10),
+            math.floor(self._display.current_w * 0.104),
             math.floor(self._display.current_h * 0.05),
         )
 
