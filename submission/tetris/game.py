@@ -92,6 +92,10 @@ class Game:
                 # Reset the previous board to the current
                 old_board = self.board.copy()
 
+                # Set action to NOOP if empty list is returned from agent
+                if actions == []:
+                    self.board.apply_action(Action.NOOP)
+
                 # Perform the action
                 for action in actions:
                     self.board.apply_action(action)
