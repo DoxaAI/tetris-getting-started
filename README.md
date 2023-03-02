@@ -43,11 +43,11 @@ First, clone this repository if you have not already done so. Then, you can star
 
 The current state of the Tetris board, `board`, is an argument to the `play_move()` method. This object contains all the information you'll need to decide an action to take. Feel free to take a look through the files in `submission/tetris` if you'd like to, but the most relevant information you'll need is:
 
-- `board.with_move()` and `board.with_moves()` return a copy of the board with an action, or list of actions, applied to it. This can be used to find the optimal set of moves for the current piece.
+- `board.with_move()` and `board.with_moves()` return a copy of the board with an action, or list of actions, applied to it.
 
 - `board.board`: a 2D list containing the current state of the Tetris board. Please note there is an extra row at index `[0]` (the top of the board) that you can exclude from any algorithms you may write. This row serves as a buffer for rotations directly after pieces spawn.
 
-- `board.piece`: The current Tetris piece that you are controlling.
+- `board.piece`: The current Tetris piece object that you are controlling.
 
 - `board.piece.piece_type`: The type of the current Tetris piece. It can be one of: `{I, J, L, O, S, T, Z}`.
 
