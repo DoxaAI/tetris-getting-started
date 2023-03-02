@@ -14,7 +14,7 @@ If you do not yet have the DOXA CLI installed, you may do so using `pip`:
 pip install -U doxa-cli
 ```
 
-If you wish to use the Pygame-based UI, you will also need to install the following packages:
+If you wish to use the PyGame-based UI, you will also need to install the following packages:
 
 ```bash
 pip install pygame pillow requests
@@ -34,7 +34,7 @@ pipenv shell
     - `submission/agent.py`: this is where you should implement your own agent!
     - `submission/doxa.yaml`: this is a configuration file used by DOXA to handle your submission
 - `cli.py`: a CLI for running your Tetris agent (run with `python cli.py`)
-- `gui.py`: a Pygame-based GUI for running your Tetris agent (run with `python gui.py`)
+- `gui.py`: a PyGame-based GUI for running your Tetris agent (run with `python gui.py`)
 - `Pipfile`: a Pipfile to install dependencies with `pipenv`
 
 ## Implementing an agent
@@ -71,7 +71,7 @@ By default, the agent just plays moves at random. What interesting gameplay stra
 
 You can run Tetris locally to either view your agent in action, or play the game yourself!
 
-Run `python cli.py` from the root directory to view the game in the command line. If you have PyGame installed, you can run `python gui.py` instead for some fancier graphics. Both of these will use the agent you've implemented.
+Run `python cli.py` from the root directory to view the game in the command line. If you have the PyGame-base UI prerequisites installed, you can run `python gui.py` instead for a better looking interface. Both of these will use the agent you've implemented.
 
 If you'd like to play Tetris yourself, you can add `--live` to either one of the commands above, e.g., `python gui.py --live`. The controls are:
 
