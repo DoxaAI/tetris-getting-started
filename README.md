@@ -14,6 +14,12 @@ If you do not yet have the DOXA CLI installed, you may do so using `pip`:
 pip install -U doxa-cli
 ```
 
+If you wish to use the command line-based UI, you will also need to install Click:
+
+```bash
+pip install click
+```
+
 If you wish to use the PyGame-based UI, you will also need to install the following packages:
 
 ```bash
