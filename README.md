@@ -2,7 +2,7 @@
 
 This repository contains everything you need to get started with Tetris on DOXA. For more information, check out the [competition page](https://doxaai.com/competition/tetris). 😎
 
-Feel free to fork this repository and use it as the foundation for your own agents. You can also join the conversation on the [DOXA Community Discord server](https://discord.gg/MUvbQ3UYcf).
+Feel free to fork this repository and use it as the foundation for your own agents. You can also join the conversation on the [DOXA Community Discord server](https://discord.gg/MUvbQ3UYcf). 👀
 
 ## Prerequisites
 
@@ -14,11 +14,9 @@ If you do not yet have the DOXA CLI installed, you may do so using `pip`:
 pip install -U doxa-cli
 ```
 
-If you wish to use the command line-based UI, you will also need to install Click:
+Installing the DOXA CLI will also install the `click` package used by the Tetris CLI.
 
-```bash
-pip install click
-```
+**Note**: on macOS and some flavours of Linux, you may have to use `python3 -m pip` or `pip3` instead of just plain `pip`.
 
 If you wish to use the PyGame-based UI, you will also need to install the following packages:
 
@@ -45,19 +43,18 @@ pipenv shell
 
 ## Implementing an agent
 
-First, clone this repository if you have not already done so. Then, you can start implementing your first agent by modifying the `play_move()` method of the agent in `submission/agent.py`.
+First, clone this repository if you have not already done so. You can then start implementing your first agent by modifying the `play_move()` method of the agent in `submission/agent.py`.
 
-The current state of the Tetris board, `board`, is an argument to the `play_move()` method. This object contains all the information you'll need to decide an action to take. Feel free to take a look through the files in `submission/tetris` if you'd like to, but the most relevant information you'll need is:
+The `play_move()` method receives the current Tetris board (`board`) as an argument and should return either a single `Action` or a sequence (i.e. a list) of actions, which will be performed in turn until the piece lands (at which point any remaining actions are discarded).
 
-- `board.with_move()` and `board.with_moves()` return a copy of the board with an action, or list of actions, applied to it.
+The Tetris `Board` object (passed in as `board`) has a number of useful attributes:
+- `board.board`: the current state of the Tetris board represented as a list of lists, where each inner list corresponds to a row. Note that our Tetris board has 21 rows and 10 columns, rather than only 20 rows, with the extra hidden row at index `0` serving as a buffer for rotations directly after pieces spawn.
+- `board.piece`: The current Tetris piece dropping down that you are controlling.
+- `board.piece.piece_type`: The type of the current Tetris piece. It can be one of `I`, `J`, `L`, `O`, `S`, `T` or `Z`.
 
-- `board.board`: a 2D list containing the current state of the Tetris board. Please note there is an extra row at index `[0]` (the top of the board) that you can exclude from any algorithms you may write. This row serves as a buffer for rotations directly after pieces spawn.
+The board also exposes the `with_move()` and `with_moves()` methods, which return a copy of the board with the provided action or actions applied to the board, respectively.
 
-- `board.piece`: The current Tetris piece object that you are controlling.
-
-- `board.piece.piece_type`: The type of the current Tetris piece. It can be one of: `{I, J, L, O, S, T, Z}`.
-
-The `play_move()` method should return at least one of the following actions:
+Actions are defined as follows:
 
 ```py
 class Action(IntEnum):
@@ -69,26 +66,49 @@ class Action(IntEnum):
     HARD_DROP = 5
 ```
 
-You can also return a sequence (e.g. a list) of moves, which will be performed in order until the piece lands (at which point any remaining moves are discarded).
-
 By default, the agent just plays moves at random. What interesting gameplay strategies can you come up with? 👀
+
+If you are curious as to how our implementation of Tetris works, take a look at the files in the `submission/tetris` directory.
 
 ## Running Tetris locally
 
-You can run Tetris locally to either view your agent in action, or play the game yourself!
+You can see how your agent (as defined in `submission/agent.py`) performs locally using the CLI and GUI scripts provided.
 
-Run `python cli.py` from the root directory to view the game in the command line. If you have the PyGame-base UI prerequisites installed, you can run `python gui.py` instead for a better looking interface. Both of these will use the agent you've implemented.
+Assuming you have the relevant packages installed as described above, to launch the PyGame-based GUI, run the following command from the root of this repository:
 
-If you'd like to play Tetris yourself, you can add `--live` to either one of the commands above, e.g., `python gui.py --live`. The controls are:
-
+```bash
+python gui.py
 ```
-q: ROTATE_ANTICLOCKWISE
-e: ROTATE_CLOCKWISE
-a: MOVE_LEFT
-d: MOVE_RIGHT
-s: HARD_DROP
-anything else: NOOP
+
+**Note**: on macOS and some flavours of Linux, use `python3` instead of `python`.
+
+To launch the Tetris CLI script, run the following command from the root of this repository:
+
+```bash
+python cli.py
 ```
+
+### Playing the game yourself
+
+You can also play the game yourself using either one of the CLI or GUI scripts by specifying the `--live` flag.
+
+```bash
+python gui.py --live
+```
+
+```bash
+python cli.py --live
+```
+
+The controls are as follows:
+- `q`: `ROTATE_ANTICLOCKWISE`
+- `e`: `ROTATE_CLOCKWISE`
+- `a`: `MOVE_LEFT`
+- `d`: `MOVE_RIGHT`
+- `s`: `HARD_DROP`
+- Anything else: `NOOP`
+
+**Note**: in the CLI, you need to hit `ENTER` after each move.
 
 ## Submitting to DOXA
 

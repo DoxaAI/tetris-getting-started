@@ -1,3 +1,5 @@
+import asyncio
+
 from tetris.agent import BaseAgent
 from tetris.board import Action, Board
 from tetris.pieces import PIECE_MAPPINGS
@@ -58,3 +60,7 @@ class GameRunner:
                     )
             else:
                 raise ValueError(f"Unknown message type: {message[0]}.")
+
+
+def main(agent: BaseAgent):
+    asyncio.run(GameRunner(agent).run())

@@ -1,8 +1,7 @@
-import asyncio
 from random import randrange
 from typing import Sequence, Union
 
-from tetris import Action, BaseAgent, Board, GameRunner
+from tetris import Action, BaseAgent, Board, main
 
 #################################################################
 #   Modify the Agent class below to implement your own agent.   #
@@ -39,4 +38,4 @@ SelectedAgent = Agent
 if __name__ == "__main__":
     agent = SelectedAgent()
 
-    asyncio.run(GameRunner(agent).run())
+    main(agent)
