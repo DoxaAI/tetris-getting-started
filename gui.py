@@ -18,7 +18,6 @@ from tetris.constants import BOARD_HEIGHT, BOARD_WIDTH
 from tetris.game import Game
 from tetris.interface import TetrisUI
 
-
 PIECE_COLOURS = {
     None: (100, 100, 100),  # GREY
     "I": (0, 255, 255),  # CYAN
@@ -42,7 +41,7 @@ class TetrisPygame(TetrisUI):
         self._clock = pygame.time.Clock()
         self._display = pygame.display.Info()
         self._screen = pygame.display.set_mode(
-            [self._display.current_w * 0.21, self._display.current_h * 0.65]
+            [int(self._display.current_w * 0.21), int(self._display.current_h * 0.65)]
         )
         self._score_font = pygame.font.Font("freesansbold.ttf", 26)
 
