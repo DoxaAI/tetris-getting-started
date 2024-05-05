@@ -1,11 +1,6 @@
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
-from tetris.constants import (
-    BOARD_HEIGHT,
-    BOARD_WIDTH,
-    BoardState,
-    Cell,
-)
+from tetris.constants import BOARD_HEIGHT, BOARD_WIDTH, BoardState, Cell
 from tetris.piece import Piece
 
 
@@ -18,7 +13,7 @@ class ZPiece(Piece):
         self.x = 4  # Z piece x coordinate is the bottom one in the middle
         self.y = 2
 
-    def spawn_piece(self) -> List[Cell]:
+    def spawn_piece(self) -> list[Cell]:
         return [
             (self.y - 1, self.x - 1),
             (self.y - 1, self.x),
@@ -28,7 +23,7 @@ class ZPiece(Piece):
 
     def move_left(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if (
@@ -88,7 +83,7 @@ class ZPiece(Piece):
 
     def move_right(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if (
@@ -148,7 +143,7 @@ class ZPiece(Piece):
 
     def rotate_clockwise(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if self.orientation == 0:
@@ -232,7 +227,7 @@ class ZPiece(Piece):
 
     def rotate_anticlockwise(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if self.orientation == 0:
@@ -347,7 +342,7 @@ class ZPiece(Piece):
 
         return False
 
-    def fall(self) -> Tuple[List[Cell], List[Cell]]:
+    def fall(self) -> Tuple[list[Cell], list[Cell]]:
         self.y += 1
 
         if self.orientation == 0:

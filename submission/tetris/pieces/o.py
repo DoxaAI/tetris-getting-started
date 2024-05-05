@@ -1,11 +1,6 @@
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
-from tetris.constants import (
-    BoardState,
-    Cell,
-    BOARD_HEIGHT,
-    BOARD_WIDTH,
-)
+from tetris.constants import BOARD_HEIGHT, BOARD_WIDTH, BoardState, Cell
 from tetris.piece import Piece
 
 
@@ -18,7 +13,7 @@ class OPiece(Piece):
         self.x = 4  # O piece x coordinate is the bottom left square
         self.y = 2
 
-    def spawn_piece(self) -> List[Cell]:
+    def spawn_piece(self) -> list[Cell]:
         return [
             (self.y, self.x),
             (self.y - 1, self.x),
@@ -28,7 +23,7 @@ class OPiece(Piece):
 
     def move_left(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if (
@@ -44,7 +39,7 @@ class OPiece(Piece):
 
     def move_right(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if (
@@ -60,22 +55,22 @@ class OPiece(Piece):
 
     def rotate_clockwise(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         return None, None
 
     def rotate_anticlockwise(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         return None, None
 
     def has_landed(self, board: BoardState) -> bool:
-        return (
+        return bool(
             self.y == BOARD_HEIGHT - 1
             or board[self.y + 1][self.x]
             or board[self.y + 1][self.x + 1]
         )
 
-    def fall(self) -> Tuple[List[Cell], List[Cell]]:
+    def fall(self) -> Tuple[list[Cell], list[Cell]]:
         self.y += 1
         old = [(self.y - 2, self.x), (self.y - 2, self.x + 1)]
         new = [(self.y, self.x), (self.y, self.x + 1)]

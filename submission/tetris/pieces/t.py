@@ -1,11 +1,6 @@
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
-from tetris.constants import (
-    BOARD_HEIGHT,
-    BOARD_WIDTH,
-    BoardState,
-    Cell,
-)
+from tetris.constants import BOARD_HEIGHT, BOARD_WIDTH, BoardState, Cell
 from tetris.piece import Piece
 
 
@@ -19,7 +14,7 @@ class TPiece(Piece):
         self.x = 4
         self.y = 2
 
-    def spawn_piece(self) -> List[Cell]:
+    def spawn_piece(self) -> list[Cell]:
         return [
             (self.y, self.x - 1),
             (self.y, self.x),
@@ -29,7 +24,7 @@ class TPiece(Piece):
 
     def move_left(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if (
@@ -85,7 +80,7 @@ class TPiece(Piece):
 
     def move_right(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if (
@@ -141,7 +136,7 @@ class TPiece(Piece):
 
     def rotate_clockwise(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if self.orientation == 0:
@@ -212,11 +207,11 @@ class TPiece(Piece):
 
             self.orientation = (self.orientation + 1) % 4
 
-        return old, new
+        return old, new  # type: ignore
 
     def rotate_anticlockwise(
         self, board: BoardState
-    ) -> Tuple[Optional[List[Cell]], Optional[List[Cell]]]:
+    ) -> Tuple[Optional[list[Cell]], Optional[list[Cell]]]:
         old, new = None, None
 
         if self.orientation == 0:
@@ -287,7 +282,7 @@ class TPiece(Piece):
 
             self.orientation = (self.orientation - 1) % 4
 
-        return old, new
+        return old, new  # type: ignore
 
     def has_landed(self, board: BoardState) -> bool:
         if self.orientation == 0 and (
@@ -322,7 +317,7 @@ class TPiece(Piece):
 
         return False
 
-    def fall(self) -> Tuple[List[Cell], List[Cell]]:
+    def fall(self) -> Tuple[list[Cell], list[Cell]]:
         self.y += 1
 
         if self.orientation == 0:

@@ -1,4 +1,4 @@
-competition: tetris
+competition: watai-tetris
 environment: cpu
 language: python
 entrypoint: agent.py

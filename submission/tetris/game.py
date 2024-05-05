@@ -1,5 +1,5 @@
 import random
-from typing import AsyncGenerator, Generator, List, Optional, Tuple
+from typing import AsyncGenerator, Generator, Optional, Sequence, Tuple
 
 from tetris.agent import BaseAgent
 from tetris.board import Action, Board
@@ -42,17 +42,17 @@ class Game:
         self,
     ) -> AsyncGenerator[
         Tuple[
-            Optional[List[Tuple[str, int, int]]],
-            Optional[List[int]],
+            Optional[list[Tuple[str | None, int, int]]],
+            Optional[list[int]],
             Board,
-            Optional[Action],
+            Optional[Sequence[Action]],
         ],
         None,
     ]:
         """Runs the Tetris game. The meat and potatoes of the Tetris tetris.
 
         Yields: AsyncGenerator[
-                    Tuple[Optional[Union[List[Tuple[str, int, int]], List[int]]],
+                    Tuple[Optional[Union[list[Tuple[str, int, int]], list[int]]],
                     int,
                     Board,
                     Optional[Action]],
@@ -93,7 +93,7 @@ class Game:
                 old_board = self.board.copy()
 
                 # Set action to NOOP if empty list is returned from agent
-                if actions == []:
+                if not actions:
                     self.board.apply_action(Action.NOOP)
 
                 # Perform the action

@@ -1,4 +1,4 @@
-from typing import Dict, List, Type
+from typing import Dict, Type
 
 from tetris.piece import Piece
 from tetris.pieces.i import IPiece
@@ -9,7 +9,7 @@ from tetris.pieces.s import SPiece
 from tetris.pieces.t import TPiece
 from tetris.pieces.z import ZPiece
 
-PIECES: List[Type[Piece]] = [
+PIECES: list[Type[Piece]] = [
     OPiece,
     IPiece,
     SPiece,
