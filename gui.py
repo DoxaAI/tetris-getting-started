@@ -57,7 +57,7 @@ class TetrisPygame(TetrisUI):
                 BytesIO(requests.get("https://doxaai.com/logo.png").content)
             ).convert("RGBA")
 
-            icon = pygame.image.fromstring(logo.tobytes(), logo.size, logo.mode)
+            icon = pygame.image.fromstring(logo.tobytes(), logo.size, logo.mode)  # type: ignore
             pygame.display.set_icon(icon)
         except:
             pass
@@ -101,7 +101,7 @@ class TetrisPygame(TetrisUI):
 
         self._screen.blit(text, text_rectangle)
 
-    def has_quit(self) -> None:
+    def has_quit(self) -> bool:
         """Checks whether the user has exited the PyGame window."""
 
         for event in pygame.event.get():
