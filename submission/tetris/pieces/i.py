@@ -210,7 +210,7 @@ class IPiece(Piece):
                 and not board[self.y + 1][self.x + 2]
             ):
                 new = [
-                    (self.y + 1, self.x + 3),
+                    # (self.y + 1, self.x + 3),
                     (self.y + 1, self.x + 2),
                     (self.y + 1, self.x + 1),
                 ]
